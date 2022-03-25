@@ -29,7 +29,7 @@ class MyReactView extends ItemView {
   }
 }
 
-export default class ReactStarterPlugin extends Plugin {
+export default class AnotherReactStarter extends Plugin {
   private view: MyReactView;
 
   async onload(): Promise<void> {

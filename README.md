@@ -1,10 +1,12 @@
 # obsidian-react-starter
 
+Code From Original Template: [React Starter](https://github.com/obsidian-community/obsidian-react-starter)
+
 A starter template for creating an [Obsidian](https://obsidian.md/) plugin with [ReactJS](https://reactjs.org/).
 
 ## Features
 
-This project comes preconfigured with [Typescript](https://www.typescriptlang.org/), [Babel](https://babeljs.io/), and [Rollup.js](https://www.rollupjs.org).
+This project comes preconfigured with [Typescript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/) And [Less](https://lesscss.org/).
 
 ## Getting Started
 
@@ -12,14 +14,14 @@ Click "use this template" to create your own fork of this repo. Make sure to ref
 
 ```bash
 # for local development
-npm install
-npm run dev
+yarn install
+yarn dev
 
 # for a production bundle
-npm install
-npm run build
+yarn install
+yarn build
 ```
 
 ## Stats
 
-The production output of this sample plugin is **~200 KB**.
+The production output of this sample plugin is **~50 KB**.
