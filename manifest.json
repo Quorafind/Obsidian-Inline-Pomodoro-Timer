@@ -1,10 +1,10 @@
 {
-  "id": "react-starter",
-  "name": "React Starter",
-  "description": "Obsidian + ReactJS",
+  "id": "another-react-starter",
+  "name": "Another React Starter",
+  "description": "Obsidian + ReactJS + Less + Vite + Prettier",
   "version": "0.0.0",
-  "author": "Liam Cain",
-  "authorUrl": "https://github.com/liamcain/",
-  "isDesktopOnly": true,
-  "minAppVersion": "0.10.8"
+  "author": "Boninall",
+  "authorUrl": "https://github.com/Quorafind/",
+  "isDesktopOnly": false,
+  "minAppVersion": "0.14.1"
 }

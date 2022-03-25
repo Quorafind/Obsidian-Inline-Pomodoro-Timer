@@ -1,4 +1,5 @@
 import * as React from "react";
+import "../less/DiceRoller.less";
 
 function randomNumber(min: number, max: number): number {
   return Math.floor(
