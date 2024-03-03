@@ -2,6 +2,7 @@
  * react-circular-progressbar styles
  * All of the styles in this file are configurable!
  */
+
 .CircularProgressbar {
   /*
    * This fixes an issue where the CircularProgressbar svg has
@@ -12,26 +13,32 @@
    * This fixes a centering issue with CircularProgressbarWithChildren:
    * https://github.com/kevinsqi/react-circular-progressbar/issues/94
    */
+  //vertical-align: middle;
 }
+
 .CircularProgressbar .CircularProgressbar-path {
   stroke: var(--color-accent);
   stroke-linecap: round;
   transition: stroke-dashoffset 0.5s ease 0s;
 }
+
 .CircularProgressbar .CircularProgressbar-trail {
   stroke: #d6d6d6;
   /* Used when trail is not full diameter, i.e. when props.circleRatio is set */
   stroke-linecap: round;
 }
+
 .CircularProgressbar .CircularProgressbar-text {
   fill: #3e98c7;
   font-size: 20px;
   dominant-baseline: middle;
   text-anchor: middle;
 }
+
 .CircularProgressbar .CircularProgressbar-background {
   fill: #d6d6d6;
 }
+
 /*
  * Sample background styles. Use these with e.g.:
  *
@@ -44,44 +51,57 @@
 .CircularProgressbar.CircularProgressbar-inverted .CircularProgressbar-background {
   fill: #3e98c7;
 }
+
 .CircularProgressbar.CircularProgressbar-inverted .CircularProgressbar-text {
   fill: #fff;
 }
+
 .CircularProgressbar.CircularProgressbar-inverted .CircularProgressbar-path {
   stroke: #fff;
 }
+
 .CircularProgressbar.CircularProgressbar-inverted .CircularProgressbar-trail {
   stroke: transparent;
 }
+
 .cm-inline-pomodoro-timer .inline-progress-bar {
   display: inline-block;
   height: var(--size-4-4);
   width: 14px;
   margin-right: var(--size-2-2);
 }
+
 .cm-inline-pomodoro-timer {
   display: inline-flex;
   align-items: center;
   line-height: calc(var(--line-height-normal) * 0.8);
+
   background: var(--background-modifier-hover);
   padding: var(--size-2-1) var(--size-2-2);
   border-radius: var(--radius-s);
+
   cursor: pointer;
   user-select: none;
+
+  &:hover {
+    background: var(--background-modifier-border-focus);
+    color: var(--link-color-hover);
+  }
 }
-.cm-inline-pomodoro-timer:hover {
-  background: var(--background-modifier-border-focus);
-  color: var(--link-color-hover);
-}
+
 .cm-inline-pomodoro-timer.resting {
   background: var(--background-modifier-active-hover);
 }
+
 .theme-dark .cm-inline-pomodoro-timer {
   background: var(--background-modifier-border-hover);
 }
+
+
 .cm-inline-pomodoro-timer.resting .CircularProgressbar .CircularProgressbar-path {
   stroke: #3e98c7;
 }
+
 .cm-inline-pomodoro-timer .time-text {
   font-size: 14px;
 }

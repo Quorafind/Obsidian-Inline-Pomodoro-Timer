@@ -1,10 +1,10 @@
 {
-  "id": "another-react-starter",
-  "name": "Another React Starter",
-  "description": "Obsidian + ReactJS + Less + Vite + Prettier",
-  "version": "0.0.0",
+  "id": "inline-pomodoro",
+  "name": "Inline Pomodoro Timer",
+  "description": "A simple inline pomodoro timer for Obsidian",
+  "version": "0.0.1",
   "author": "Boninall",
   "authorUrl": "https://github.com/Quorafind/",
   "isDesktopOnly": false,
-  "minAppVersion": "0.14.1"
+  "minAppVersion": "1.0.0"
 }

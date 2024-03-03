@@ -1,27 +1,10 @@
-# obsidian-react-starter
+# Obsidian Inline Pomodoro Timer
 
-Code From Original Template: [React Starter](https://github.com/obsidian-community/obsidian-react-starter)
-
-A starter template for creating an [Obsidian](https://obsidian.md/) plugin with [ReactJS](https://reactjs.org/).
+This is a simple plugin that adds a Pomodoro timer to the Obsidian editor. It's based on
+the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique), a time management method developed by
+Francesco Cirillo in the late 1980s.
 
 ## Features
 
-This project comes preconfigured with [Typescript](https://www.typescriptlang.org/), [Vite](https://vitejs.dev/) And [Less](https://lesscss.org/).
-
-## Getting Started
-
-Click "use this template" to create your own fork of this repo. Make sure to reference [the official sample plugin](https://github.com/obsidianmd/obsidian-sample-plugin) for information about how to get started with the Obsidian API and how to submit your plugin to the Community Plugin Gallery.
-
-```bash
-# for local development
-yarn install
-yarn dev
-
-# for a production bundle
-yarn install
-yarn build
-```
-
-## Stats
-
-The production output of this sample plugin is **~50 KB**.
+- Start and stop the timer with a single click (and insert the timer into the current note)
+- Customizable timer duration(not yet implemented)
