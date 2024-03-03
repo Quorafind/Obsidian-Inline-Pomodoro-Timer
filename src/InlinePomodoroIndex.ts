@@ -9,6 +9,13 @@ declare module "obsidian" {
     }
 }
 
+const updatePomodoroTime = (editor: any, currentLine: number, index: number, newTimeString: string, markTextLength: number) => {
+    editor.replaceRange(newTimeString, {line: currentLine, ch: index}, {line: currentLine, ch: index + markTextLength});
+    const currentCursor = editor.getCursor();
+    editor.setCursor({line: currentLine, ch: index + newTimeString.length - 1});
+    editor.setCursor(currentCursor);
+};
+
 export default class InlinePomodoroPlugin extends Plugin {
 
     async onload(): Promise<void> {
@@ -20,8 +27,9 @@ export default class InlinePomodoroPlugin extends Plugin {
             const markText = currentLineText.match(/%%\s*?time(\d*)?:(\d{10})(\+(\d{1,4}))?\s*?%%/g);
             if (markText === null) {
                 menu.addItem((item) => {
-                    item.setTitle('Insert Pomodoro');
-                    item.setIcon('alarm-clock-plus');
+                    item.setSection('selection-link');
+                    item.setTitle('Add pomodoro timer');
+                    item.setIcon('alarm-clock');
                     item.onClick(() => {
                         const view = (editor.cm as EditorView);
                         let realPos = 0;
@@ -57,17 +65,19 @@ export default class InlinePomodoroPlugin extends Plugin {
             const duration = /\+(\d{1,4})/g.exec(markText[0])[1];
             if (parseInt(duration) > 0) {
                 menu.addItem((item) => {
+                    item.setSection('selection-link');
                     item.setTitle('Resume pomodoro');
                     item.setIcon('play');
                     item.onClick(() => {
                         const newTimeString = `%% time${repeat || '1'}:${moment().add(POMODORO_DURATION > parseInt(duration) ? POMODORO_DURATION - parseInt(duration) : POMODORO_DURATION, 'seconds').format('X')}+0 %%`;
-                        editor.replaceRange(newTimeString, {line: currentLine, ch: index}, {
-                            line: currentLine,
-                            ch: index + markText[0].length
-                        });
-                        const currentCursor = editor.getCursor();
-                        editor.setCursor({line: currentLine, ch: index + newTimeString.length - 1});
-                        editor.setCursor(currentCursor);
+                        // editor.replaceRange(newTimeString, {line: currentLine, ch: index}, {
+                        //     line: currentLine,
+                        //     ch: index + markText[0].length
+                        // });
+                        // const currentCursor = editor.getCursor();
+                        // editor.setCursor({line: currentLine, ch: index + newTimeString.length - 1});
+                        // editor.setCursor(currentCursor);
+                        updatePomodoroTime(editor, currentLine, index, newTimeString, markText[0].length);
                     });
                 });
                 return;
@@ -75,17 +85,19 @@ export default class InlinePomodoroPlugin extends Plugin {
 
             if (parseInt(time) < parseInt(moment().format('X'))) {
                 menu.addItem((item) => {
-                    item.setTitle('Start pomodoro');
+                    item.setSection('selection-link');
+                    item.setTitle('Restart pomodoro');
                     item.setIcon('rotate-ccw');
                     item.onClick(() => {
                         const newTimeString = `%% time${parseInt(repeat) + 1 || '2'}:${moment().add(1500, 'seconds').format('X')}+0 %%`;
-                        editor.replaceRange(newTimeString, {line: currentLine, ch: index}, {
-                            line: currentLine,
-                            ch: index + markText[0].length
-                        });
-                        const currentCursor = editor.getCursor();
-                        editor.setCursor({line: currentLine, ch: index + newTimeString.length - 1});
-                        editor.setCursor(currentCursor);
+                        // editor.replaceRange(newTimeString, {line: currentLine, ch: index}, {
+                        //     line: currentLine,
+                        //     ch: index + markText[0].length
+                        // });
+                        // const currentCursor = editor.getCursor();
+                        // editor.setCursor({line: currentLine, ch: index + newTimeString.length - 1});
+                        // editor.setCursor(currentCursor);
+                        updatePomodoroTime(editor, currentLine, index, newTimeString, markText[0].length);
                     });
                 });
                 return;
@@ -93,16 +105,19 @@ export default class InlinePomodoroPlugin extends Plugin {
 
 
             menu.addItem((item) => {
+                item.setSection('selection-link');
                 item.setTitle('Pause pomodoro');
                 item.setIcon('pause');
                 item.onClick(() => {
                     const newTimeString = `%% time${repeat || '1'}:${time}+${POMODORO_DURATION - parseInt(time) + parseInt(moment().format('X'))} %%`;
-                    editor.replaceRange(newTimeString, {line: currentLine, ch: index}, {
-                        line: currentLine,
-                        ch: index + markText[0].length
-                    });
-                    editor.setCursor({line: currentLine, ch: index + newTimeString.length - 1});
-                    editor.setCursor({line: currentLine, ch: index + newTimeString.length + 1});
+                    // editor.replaceRange(newTimeString, {line: currentLine, ch: index}, {
+                    //     line: currentLine,
+                    //     ch: index + markText[0].length
+                    // });
+                    // const currentCursor = editor.getCursor();
+                    // editor.setCursor({line: currentLine, ch: index + newTimeString.length - 1});
+                    // editor.setCursor(currentCursor);
+                    updatePomodoroTime(editor, currentLine, index, newTimeString, markText[0].length);
                 });
             });
 
