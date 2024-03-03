@@ -103,50 +103,53 @@ export const TimeCircleProgressbar: React.FC<Props> = ({
     };
 
     const handleClick = () => {
-        if (!isPaused) {
-            if (currentTime >= endTimeState) {
-                setCurrentTime(parseInt(moment().format('X')));
-                const newEndTime = parseInt(moment().add(POMODORO_DURATION, 'seconds').format('X'));
-                setEndTimeState(newEndTime);
-                update(newEndTime.toString(), '0', 'repeat');
-                setRepeatTime((r) => r + 1);
-                return;
-            }
-            setIsPaused(true);
-            window.clearInterval(intervalRef.current);
-            intervalRef.current = null;
-
-            const elapsedTime = POMODORO_DURATION - (endTimeState - currentTime);
-            setElapsedTimeState(elapsedTime);
-            update(endTimeState.toString(), elapsedTime.toString(), 'restart');
+        if (isPaused) {
+            const newEndTime = parseInt(moment().add(POMODORO_DURATION > elapsedTimeState ? POMODORO_DURATION - elapsedTimeState : POMODORO_DURATION, 'seconds').format('X'));
+            setEndTimeState(newEndTime);
+            setCurrentTime(parseInt(moment().format('X')));
+            setIsPaused(false);
+            update(newEndTime.toString(), '0', 'restart');
             return;
         }
-        const newEndTime = parseInt(moment().add(POMODORO_DURATION > elapsedTimeState ? POMODORO_DURATION - elapsedTimeState : POMODORO_DURATION, 'seconds').format('X'));
-        setEndTimeState(newEndTime);
-        setCurrentTime(parseInt(moment().format('X')));
-        setIsPaused(false);
-        update(newEndTime.toString(), '0', 'restart');
+
+
+        if (currentTime >= endTimeState) {
+            setCurrentTime(parseInt(moment().format('X')));
+            const newEndTime = parseInt(moment().add(POMODORO_DURATION, 'seconds').format('X'));
+            setEndTimeState(newEndTime);
+            update(newEndTime.toString(), '0', 'repeat');
+            setRepeatTime((r) => r + 1);
+            return;
+        }
+        setIsPaused(true);
+        window.clearInterval(intervalRef.current);
+        intervalRef.current = null;
+
+        const elapsedTime = POMODORO_DURATION - (endTimeState - currentTime);
+        setElapsedTimeState(elapsedTime);
+        update(endTimeState.toString(), elapsedTime.toString(), 'restart');
+
+
     };
 
     const handleContextMenu = (e: React.MouseEvent) => {
         e.preventDefault();
         const menu = new Menu();
-        if (isPaused) {
-            menu.addItem((item) => {
-                item.setIcon('play').setTitle('Start').onClick(() => {
-                    handleClick();
-                });
+        isPaused && menu.addItem((item) => {
+            item.setIcon('play').setTitle('Start pomodoro').onClick(() => {
+                handleClick();
             });
-        } else if (currentTime < endTimeState) {
-            menu.addItem((item) => {
-                item.setIcon('pause').setTitle('Pause').onClick(() => {
-                    handleClick();
-                });
+        });
+
+        !isPaused && currentTime < endTimeState && menu.addItem((item) => {
+            item.setIcon('pause').setTitle('Pause pomodoro').onClick(() => {
+                handleClick();
             });
-        }
+        });
+
 
         menu.addItem((item) => {
-            item.setIcon('rotate-cw').setTitle('Restart').onClick(() => {
+            item.setIcon('rotate-cw').setTitle('Restart pomodoro').onClick(() => {
                 const newEndTime = parseInt(moment().add(POMODORO_DURATION, 'seconds').format('X'));
                 setEndTimeState(newEndTime);
                 setCurrentTime(parseInt(moment().format('X')));
