@@ -9,12 +9,12 @@ import {
     ViewUpdate,
     WidgetType
 } from "@codemirror/view";
-import { editorEditorField, editorInfoField, editorLivePreviewField } from "obsidian";
+import { editorInfoField, editorLivePreviewField } from "obsidian";
 import InlinePomodoroPlugin from "../InlinePomodoroIndex";
 import ReactDOM from 'react-dom/client';
 import React, { StrictMode } from "react";
 import TimeCircleProgressbar from "@/ui/TimeCircleProgressbar";
-import { Annotation, StateEffectType, Transaction } from "@codemirror/state";
+import { Transaction } from "@codemirror/state";
 
 interface DecoSpec {
     widget?: InlineTimerWidget;
@@ -24,7 +24,7 @@ class InlineTimerWidget extends WidgetType {
     public error = false;
     private currentEnd: string;
     private repeatTime: number;
-    private curentDuration: string;
+    private currentDuration: string;
     private root: ReactDOM.Root;
 
     private span: HTMLSpanElement;
@@ -45,7 +45,7 @@ class InlineTimerWidget extends WidgetType {
         super();
         this.currentEnd = timeRange.end;
         this.repeatTime = parseInt(timeRange.repeat || '1');
-        this.curentDuration = timeRange.duration;
+        this.currentDuration = timeRange.duration;
 
         this.span = createSpan();
         this.root = ReactDOM.createRoot(this.span);
@@ -53,12 +53,12 @@ class InlineTimerWidget extends WidgetType {
 
     eq(widget: InlineTimerWidget): boolean {
         // console.log(this.currentEnd, widget.currentEnd, this.textRange.from, widget.textRange.from);
-        return widget.currentEnd === this.currentEnd && widget.curentDuration === this.curentDuration;
+        return widget.currentEnd === this.currentEnd && widget.currentDuration === this.currentDuration;
     }
 
     updateTime(end: string, duration: string, type: 'repeat' | 'restart') {
         this.currentEnd = end;
-        this.curentDuration = duration;
+        this.currentDuration = duration;
         const timerCurrentLine = this.view.state.doc.lineAt(this.textRange.from);
         const lineFrom = timerCurrentLine.from;
         const startIndex = this.textRange.from - lineFrom;

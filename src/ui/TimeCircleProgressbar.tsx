@@ -16,7 +16,10 @@ interface Props {
     update: (endTime: string, elapsedTime: string, type: 'repeat' | 'restart') => void;
 }
 
-export const POMODORO_DURATION = 25 * 60;
+export const getDuration = (plugin: InlinePomodoroPlugin) => {
+    const duration = plugin.settings.pomodoroMinutes * 60;
+    return duration || 25 * 60;
+};
 
 export const TimeCircleProgressbar: React.FC<Props> = ({
                                                            markdownInfo,
@@ -80,9 +83,9 @@ export const TimeCircleProgressbar: React.FC<Props> = ({
 
     useEffect(() => {
         if (parseInt(elapsedTime) > 0) {
-            const realEndTime = moment().add(POMODORO_DURATION > parseInt(elapsedTime) ? POMODORO_DURATION - parseInt(elapsedTime) : POMODORO_DURATION, 'seconds').format('X');
+            const realEndTime = moment().add(getDuration(plugin) > parseInt(elapsedTime) ? getDuration(plugin) - parseInt(elapsedTime) : getDuration(plugin), 'seconds').format('X');
             const timeLeft = parseInt(realEndTime) - currentTime;
-            const perc = (timeLeft / POMODORO_DURATION) * 100;
+            const perc = (timeLeft / getDuration(plugin)) * 100;
             setPercentage(perc);
         }
 
@@ -98,13 +101,13 @@ export const TimeCircleProgressbar: React.FC<Props> = ({
 
     const updatePercentage = () => {
         const timeLeft = (endTimeState - currentTime - (isPaused ? elapsedTimeState : 0));
-        const perc = (timeLeft / POMODORO_DURATION) * 100;
+        const perc = (timeLeft / getDuration(plugin)) * 100;
         setPercentage(perc);
     };
 
     const handleClick = () => {
         if (isPaused) {
-            const newEndTime = parseInt(moment().add(POMODORO_DURATION > elapsedTimeState ? POMODORO_DURATION - elapsedTimeState : POMODORO_DURATION, 'seconds').format('X'));
+            const newEndTime = parseInt(moment().add(getDuration(plugin) > elapsedTimeState ? getDuration(plugin) - elapsedTimeState : getDuration(plugin), 'seconds').format('X'));
             setEndTimeState(newEndTime);
             setCurrentTime(parseInt(moment().format('X')));
             setIsPaused(false);
@@ -115,7 +118,7 @@ export const TimeCircleProgressbar: React.FC<Props> = ({
 
         if (currentTime >= endTimeState) {
             setCurrentTime(parseInt(moment().format('X')));
-            const newEndTime = parseInt(moment().add(POMODORO_DURATION, 'seconds').format('X'));
+            const newEndTime = parseInt(moment().add(getDuration(plugin), 'seconds').format('X'));
             setEndTimeState(newEndTime);
             update(newEndTime.toString(), '0', 'repeat');
             setRepeatTime((r) => r + 1);
@@ -125,7 +128,7 @@ export const TimeCircleProgressbar: React.FC<Props> = ({
         window.clearInterval(intervalRef.current);
         intervalRef.current = null;
 
-        const elapsedTime = POMODORO_DURATION - (endTimeState - currentTime);
+        const elapsedTime = getDuration(plugin) - (endTimeState - currentTime);
         setElapsedTimeState(elapsedTime);
         update(endTimeState.toString(), elapsedTime.toString(), 'restart');
 
@@ -136,21 +139,21 @@ export const TimeCircleProgressbar: React.FC<Props> = ({
         e.preventDefault();
         const menu = new Menu();
         isPaused && menu.addItem((item) => {
-            item.setIcon('play').setTitle('Start pomodoro').onClick(() => {
+            item.setIcon('play').setTitle('Start').onClick(() => {
                 handleClick();
             });
         });
 
         !isPaused && currentTime < endTimeState && menu.addItem((item) => {
-            item.setIcon('pause').setTitle('Pause pomodoro').onClick(() => {
+            item.setIcon('pause').setTitle('Pause').onClick(() => {
                 handleClick();
             });
         });
 
 
         menu.addItem((item) => {
-            item.setIcon('rotate-cw').setTitle('Restart pomodoro').onClick(() => {
-                const newEndTime = parseInt(moment().add(POMODORO_DURATION, 'seconds').format('X'));
+            item.setIcon('rotate-cw').setTitle('Restart').onClick(() => {
+                const newEndTime = parseInt(moment().add(getDuration(plugin), 'seconds').format('X'));
                 setEndTimeState(newEndTime);
                 setCurrentTime(parseInt(moment().format('X')));
                 setIsPaused(false);
