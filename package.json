@@ -1,7 +1,7 @@
 {
-  "name": "inline-pomodoro",
-  "version": "0.0.0",
-  "description": "Obsidian + ReactJS + Less + Vite + Prettier",
+  "name": "inline-pomodoro-timer",
+  "version": "0.1.0",
+  "description": "A simple inline pomodoro timer for Obsidian",
   "author": "Boninall",
   "main": "main.js",
   "license": "MIT",
