@@ -24,7 +24,7 @@ class InlineTimerWidget extends WidgetType {
     public error = false;
     private currentEnd: string;
     private repeatTime: number;
-    private currentDuration: string;
+    private currentElapsed: string;
     private root: ReactDOM.Root;
 
     private span: HTMLSpanElement;
@@ -34,7 +34,7 @@ class InlineTimerWidget extends WidgetType {
         public readonly plugin: InlinePomodoroPlugin,
         public readonly timeRange: {
             end: string,
-            duration: string,
+            elapsed: string,
             repeat: string,
         },
         public readonly textRange: {
@@ -45,7 +45,7 @@ class InlineTimerWidget extends WidgetType {
         super();
         this.currentEnd = timeRange.end;
         this.repeatTime = parseInt(timeRange.repeat || '1');
-        this.currentDuration = timeRange.duration;
+        this.currentElapsed = timeRange.elapsed;
 
         this.span = createSpan();
         this.root = ReactDOM.createRoot(this.span);
@@ -53,12 +53,12 @@ class InlineTimerWidget extends WidgetType {
 
     eq(widget: InlineTimerWidget): boolean {
         // console.log(this.currentEnd, widget.currentEnd, this.textRange.from, widget.textRange.from);
-        return widget.currentEnd === this.currentEnd && widget.currentDuration === this.currentDuration;
+        return widget.currentEnd === this.currentEnd && widget.currentElapsed === this.currentElapsed;
     }
 
-    updateTime(end: string, duration: string, type: 'repeat' | 'restart') {
+    updateTime(end: string, elapsed: string, type: 'repeat' | 'restart') {
         this.currentEnd = end;
-        this.currentDuration = duration;
+        this.currentElapsed = elapsed;
         const timerCurrentLine = this.view.state.doc.lineAt(this.textRange.from);
         const lineFrom = timerCurrentLine.from;
         const startIndex = this.textRange.from - lineFrom;
@@ -71,7 +71,7 @@ class InlineTimerWidget extends WidgetType {
             changes: {
                 from: firstMarkIndex === -1 ? this.textRange.from : (timerCurrentLine.from + firstMarkIndex),
                 to: nextMarkIndex === -1 ? this.textRange.to : (timerCurrentLine.from + nextMarkIndex + 2),
-                insert: `%% time${type === 'repeat' ? (this.repeatTime ? this.repeatTime + 1 : 2) : (this.repeatTime ? this.repeatTime : 1)}:${end}+${duration} %%`,
+                insert: `%% time${type === 'repeat' ? (this.repeatTime ? this.repeatTime + 1 : 2) : (this.repeatTime ? this.repeatTime : 1)}:${end}+${elapsed} %%`,
             },
             annotations: Transaction.userEvent.of("plugin-update")
         });
@@ -80,16 +80,23 @@ class InlineTimerWidget extends WidgetType {
 
     toDOM(): HTMLElement {
         this.root = ReactDOM.createRoot(this.span);
+        const line = this.view.state.doc.lineAt(this.textRange.from);
+        const text = line.text.replace(/%%\s*?time(\d*)?:(\d{10})(\+(\d{1,4}))?\s*?%%/g, '');
         this.root.render(
             <StrictMode>
                 <TimeCircleProgressbar
                     markdownInfo={this.view.state.field(editorInfoField)}
                     plugin={this.plugin}
-                    endTime={this.timeRange.end}
-                    elapsedTime={this.timeRange.duration}
-                    repeat={this.timeRange.repeat || '1'}
-                    update={(end, duration, type) => {
-                        this.updateTime(end, duration, type);
+                    timeInfo={{
+                        endTime: this.timeRange.end,
+                        elapsedTime: this.timeRange.elapsed,
+                        repeat: this.timeRange.repeat || '1',
+                    }}
+                    textInfo={{
+                        text: text
+                    }}
+                    update={(end, elapsed, type) => {
+                        this.updateTime(end, elapsed, type);
                     }}
                 />
             </StrictMode>);
@@ -123,7 +130,7 @@ export function createInlinePomodoroPlugin(_plugin: InlinePomodoroPlugin) {
                         Decoration.replace({
                             widget: new InlineTimerWidget(view, _plugin, {
                                 end: match[2],
-                                duration: match[4],
+                                elapsed: match[4],
                                 repeat: match[1],
                             }, {
                                 from,

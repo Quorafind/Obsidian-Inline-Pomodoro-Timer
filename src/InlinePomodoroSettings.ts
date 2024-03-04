@@ -5,6 +5,9 @@ export interface InlinePomodoroSettings {
     pomodoroMinutes: number;
     shortBreakMinutes: number;
     longBreakMinutes: number;
+
+    pushNotification: boolean;
+    secretKey: string;
 }
 
 
@@ -12,6 +15,9 @@ export const DEFAULT_POMODORO_SETTINGS: InlinePomodoroSettings = {
     pomodoroMinutes: 25,
     shortBreakMinutes: 5,
     longBreakMinutes: 15,
+
+    pushNotification: false,
+    secretKey: '',
 };
 
 export class InlinePomodoroSettingTab extends PluginSettingTab {
@@ -84,5 +90,25 @@ export class InlinePomodoroSettingTab extends PluginSettingTab {
         });
 
 
+        this.showNotification(containerEl, settings);
+    }
+
+    showNotification(containerEl: HTMLElement, settings: InlinePomodoroSettings) {
+        new Setting(containerEl).setName('Push notification').setDesc('Enable push notification for pomodoro').addToggle((toggle) => {
+            toggle.setValue(settings.pushNotification).onChange(async (value) => {
+                this.updateSettings('pushNotification', value);
+                this.debounceDisplay();
+            });
+        });
+
+        if (settings.pushNotification) {
+            new Setting(containerEl).setName('Secret key').setDesc('Secret key for push notification').addText((text) => {
+                text.inputEl.type = 'password';
+                text.setValue(settings.secretKey).onChange(async (value) => {
+                    this.updateSettings('secretKey', value);
+                    this.debounceDisplay();
+                });
+            });
+        }
     }
 }

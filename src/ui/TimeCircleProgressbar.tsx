@@ -1,18 +1,30 @@
 import '@/less/TimeCircleProgressbar.less';
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
-import { MarkdownFileInfo, MarkdownView, Menu, moment, setTooltip } from "obsidian";
+import {
+    MarkdownFileInfo,
+    MarkdownView,
+    Menu,
+    moment, Notice, requestUrl,
+    RequestUrlParam,
+    RequestUrlResponsePromise,
+    setTooltip
+} from "obsidian";
 import { useEffect, useRef, useState } from "react";
 import React from 'react';
 import InlinePomodoroPlugin from "@/InlinePomodoroIndex";
 import { useHover } from "@/hook/useHover";
 
 interface Props {
-
     plugin: InlinePomodoroPlugin;
     markdownInfo: MarkdownFileInfo;
-    endTime: string;
-    elapsedTime: string;
-    repeat: string;
+    timeInfo: {
+        endTime: string;
+        elapsedTime: string;
+        repeat: string;
+    };
+    textInfo: {
+        text: string;
+    };
     update: (endTime: string, elapsedTime: string, type: 'repeat' | 'restart') => void;
 }
 
@@ -21,14 +33,55 @@ export const getDuration = (plugin: InlinePomodoroPlugin) => {
     return duration || 25 * 60;
 };
 
+export function sendNotification(plugin: InlinePomodoroPlugin, title: string, desp?: string, short?: string, noip?: number, openid?: string): RequestUrlResponsePromise {
+    if (!plugin.settings.secretKey) {
+        new Notice('Please set the secret key in the settings');
+        return;
+    }
+
+    const apiUrl = `https://sctapi.ftqq.com/${plugin.settings.secretKey}.send`;
+    const method = 'POST';
+    const contentType = 'application/json;charset=utf-8';
+
+    // 构造请求体
+    const body = JSON.stringify({
+        title: title,
+        desp: desp,
+        short: short,
+        noip: noip,
+        channel: '9|98',
+        openid: openid
+    });
+
+    // 构造请求参数
+    const requestParams: RequestUrlParam = {
+        url: apiUrl,
+        method: method,
+        contentType: contentType,
+        body: body,
+        headers: {
+            'Content-Type': contentType
+        }
+    };
+
+    return requestUrl(requestParams);
+}
+
 export const TimeCircleProgressbar: React.FC<Props> = ({
                                                            markdownInfo,
                                                            plugin,
-                                                           endTime,
-                                                           elapsedTime,
-                                                           repeat,
+                                                           timeInfo,
+                                                           textInfo,
                                                            update,
                                                        }) => {
+    const {
+        endTime,
+        elapsedTime,
+        repeat
+    } = timeInfo;
+
+    const {text} = textInfo;
+
     const [endTimeState, setEndTimeState] = useState(parseInt(endTime));
     const [currentTime, setCurrentTime] = useState(parseInt(moment().format('X')));
     const [isPaused, setIsPaused] = useState(parseInt(elapsedTime) > 0);
@@ -51,7 +104,11 @@ export const TimeCircleProgressbar: React.FC<Props> = ({
 
 
     useEffect(() => {
-
+        if (currentTime >= endTimeState) {
+            window.clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            return;
+        }
 
         if (isPaused || intervalRef.current) {
             window.clearInterval(intervalRef.current);
@@ -99,6 +156,17 @@ export const TimeCircleProgressbar: React.FC<Props> = ({
         updatePercentage();
     }, [currentTime, endTimeState, isPaused, elapsedTimeState]);
 
+    useEffect(() => {
+        if (!intervalRef.current) return;
+        if (currentTime < endTimeState) return;
+
+        if (currentTime >= endTimeState && !isPaused && elapsedTimeState === 0) {
+            window.clearInterval(intervalRef.current);
+            intervalRef.current = null;
+            plugin.settings.pushNotification && sendNotification(plugin, text.slice(0, 10), text, `Pomodoro done ${repeatTime} times`);
+        }
+    }, [currentTime]);
+
     const updatePercentage = () => {
         const timeLeft = (endTimeState - currentTime - (isPaused ? elapsedTimeState : 0));
         const perc = (timeLeft / getDuration(plugin)) * 100;
@@ -131,8 +199,6 @@ export const TimeCircleProgressbar: React.FC<Props> = ({
         const elapsedTime = getDuration(plugin) - (endTimeState - currentTime);
         setElapsedTimeState(elapsedTime);
         update(endTimeState.toString(), elapsedTime.toString(), 'restart');
-
-
     };
 
     const handleContextMenu = (e: React.MouseEvent) => {

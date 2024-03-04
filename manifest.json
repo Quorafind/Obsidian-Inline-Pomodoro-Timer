@@ -2,7 +2,7 @@
   "id": "inline-pomodoro",
   "name": "Inline Pomodoro Timer",
   "description": "A simple inline pomodoro timer for Obsidian",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Boninall",
   "authorUrl": "https://github.com/Quorafind/",
   "isDesktopOnly": false,
