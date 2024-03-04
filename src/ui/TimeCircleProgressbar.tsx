@@ -123,7 +123,6 @@ export const TimeCircleProgressbar: React.FC<Props> = ({
                     window.clearInterval(intervalRef.current);
                     return;
                 }
-                console.log('set current time');
                 setCurrentTime(parseInt(moment().format('X')));
             }, 1000);
             (markdownInfo as MarkdownView).registerInterval(intervalRef.current);
@@ -132,7 +131,6 @@ export const TimeCircleProgressbar: React.FC<Props> = ({
 
         loadTime();
         return () => {
-            console.log('clear interval');
             window.clearInterval(intervalRef.current);
             intervalRef.current = null;
         };
