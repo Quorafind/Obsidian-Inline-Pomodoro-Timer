@@ -102,7 +102,7 @@ export class InlinePomodoroSettingTab extends PluginSettingTab {
         });
 
         if (settings.pushNotification) {
-            new Setting(containerEl).setName('Secret key').setDesc('Secret key for push notification').addText((text) => {
+            new Setting(containerEl).setName('ServerChan Secret key').setDesc('Secret key for push notification, based on ServerChan').addText((text) => {
                 text.inputEl.type = 'password';
                 text.setValue(settings.secretKey).onChange(async (value) => {
                     this.updateSettings('secretKey', value);

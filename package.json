@@ -1,6 +1,6 @@
 {
   "name": "inline-pomodoro-timer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A simple inline pomodoro timer for Obsidian",
   "author": "Boninall",
   "main": "main.js",
